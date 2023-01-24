@@ -14,6 +14,33 @@ def connect():
     DSN = f'{DB_TYPE.lower()}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
     return sqlalchemy.create_engine(DSN)
 
+    with open('tests_data.json', 'r') as f:
+        data = json.load(f)
+        Session = sessionmaker(engine)
+        session = Session()
+        for element in data:
+            if element['model'] == 'publisher':
+                instance = Publisher(name=element['fields']['name'])
+                session.add(instance)
+                session.commit()
+            elif element['model'] == 'book':
+                instance = Book(title=element['fields']['title'], id_publisher=element['fields']['id_publisher'])
+                session.add(instance)
+                session.commit()
+            elif element['model'] == 'shop':
+                instance = Shop(name=element['fields']['name'])
+                session.add(instance)
+                session.commit()
+            elif element['model'] == 'stock':
+                instance = Stock(id_book=element['fields']['id_book'], id_shop=element['fields']['id_shop'], count=element['fields']['count'])
+                session.add(instance)
+                session.commit()
+            elif element['model'] == 'sale':
+                instance = Sale(price=element['fields']['price'], date_sale=element['fields']['date_sale'], count=element['fields']['count'], id_stock=element['fields']['id_stock'])
+                session.add(instance)
+                session.commit()
+        session.close()
+
 def info_book():
     request_in = input('Введите имя или id издателя: ')
     if request_in.isdigit():
@@ -26,10 +53,11 @@ def info_book():
 
 if __name__ == '__main__':
     engine = connect()
+
     create_tables(engine)
+
     Session = sessionmaker(engine)
     session = Session()
-    
     info_book()
     session.close()
 
