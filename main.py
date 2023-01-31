@@ -25,7 +25,7 @@ if __name__ == '__main__':
     DSN = f'{DB_TYPE.lower()}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
     
     engine = sqlalchemy.create_engine(DSN)
-    create_tables(engine)
+    #create_tables(engine)
     Session = sessionmaker(engine)
     session = Session()
     info_book(session)
